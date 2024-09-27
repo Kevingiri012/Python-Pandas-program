@@ -1,0 +1,86 @@
+# Import Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+url = 'https://raw.githubusercontent.com/arora123/Data/master/Automobile_data.csv'
+df = pd.read_csv(url)
+
+# A. Check for Missing Values and Drop Rows with Missing Data
+missing_values = df.isnull().sum()
+print("Missing values:\n", missing_values)
+
+# Drop rows with missing values
+df_clean = df.dropna()
+print(f"Data after dropping missing values: {df_clean.shape[0]} rows")
+
+# 1. Cars with Minimum and Maximum Price
+# Convert 'price' to numeric (some entries might be non-numeric)
+df_clean['price'] = pd.to_numeric(df_clean['price'], errors='coerce')
+
+min_price_car = df_clean[df_clean['price'] == df_clean['price'].min()]
+max_price_car = df_clean[df_clean['price'] == df_clean['price'].max()]
+
+print("\nCar with Minimum Price:\n", min_price_car[['company', 'body-style', 'price']])
+print("\nCar with Maximum Price:\n", max_price_car[['company', 'body-style', 'price']])
+
+# 2. Count Cars by Body Style
+body_style_count = df_clean['body-style'].value_counts()
+print("\nCars by Body Style:\n", body_style_count)
+
+# 3. Average Price by Body Style (Descending Order)
+avg_price_by_body = df_clean.groupby('body-style')['price'].mean().sort_values(ascending=False)
+print("\nAverage Price by Body Style (Descending):\n", avg_price_by_body)
+
+# 4. Average Price by Company (Descending Order)
+avg_price_by_company = df_clean.groupby('company')['price'].mean().sort_values(ascending=False)
+print("\nAverage Price by Company (Descending):\n", avg_price_by_company)
+
+# 5. Count Cars by Number of Cylinders
+cylinders_count = df_clean['num-of-cylinders'].value_counts()
+print("\nCars by Number of Cylinders:\n", cylinders_count)
+
+# Data Visualization using Matplotlib
+
+# Plot: Average Price by Company
+plt.figure(figsize=(10, 6))
+avg_price_by_company.plot(kind='bar', color='skyblue')
+plt.title('Average Price by Company')
+plt.xlabel('Company')
+plt.ylabel('Average Price')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Plot: Number of Cars by Cylinder Count
+plt.figure(figsize=(10, 6))
+cylinders_count.plot(kind='bar', color='orange')
+plt.title('Number of Cars by Cylinder Count')
+plt.xlabel('Cylinder Count')
+plt.ylabel('Number of Cars')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Plot: Average Price by Body Style
+plt.figure(figsize=(10, 6))
+avg_price_by_body.plot(kind='bar', color='green')
+plt.title('Average Price by Body Style')
+plt.xlabel('Body Style')
+plt.ylabel('Average Price')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# 6. Engine Type vs Horsepower
+df_clean['horsepower'] = pd.to_numeric(df_clean['horsepower'], errors='coerce')
+avg_hp_by_engine = df_clean.groupby('engine-type')['horsepower'].mean()
+
+plt.figure(figsize=(10, 6))
+avg_hp_by_engine.plot(kind='bar', color='purple')
+plt.title('Average Horsepower by Engine Type')
+plt.xlabel('Engine Type')
+plt.ylabel('Average Horsepower')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
